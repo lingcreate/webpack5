@@ -18,7 +18,7 @@ module.exports = {
 
     // mode选项
     mode: 'development',
-    // 在出口文件中，显示应用文件的源代码
+    // 在控制台，显示应用文件的源代码，而不是打包后的文件
     devtool: 'inline-source-map',
     // 使用webpack-dev-server
     devServer: {

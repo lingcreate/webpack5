@@ -1,0 +1,19 @@
+/* 加载字体文件 */
+@font-face {
+    font-family: 'iconfont';
+    src:url('./assets/icomoon.ttf') format('truetype');
+    content:''
+}
+
+.icon {
+    font-family: 'iconfont';
+    font-size: 30px;
+}
+
+.hello {
+    color: red;
+}
+
+.block-bg {
+    background-image: url(./assets/jb.svg) !important;
+}

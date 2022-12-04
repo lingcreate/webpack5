@@ -19,6 +19,7 @@ module.exports = {
     ],
 
     mode: 'development',
+    // 在控制台中，显示源代码，而不是打包编译后的文件
     devtool: 'inline-source-map',
     devServer: {
         static: './dist'

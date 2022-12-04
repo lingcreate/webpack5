@@ -1,16 +1,36 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 // 引入 json模块
 const toml = require('toml');
 const yaml = require('yaml')
 const json5 = require('json5')
 
 module.exports = {
-    entry: './src/index.js',
+    // entry: './src/index.js',
+    // 配置多入口文件
+    entry: {
+        // 一、入口起点
+        index: './src/index.js',
+        // another: './src/another-module.js'
+
+        // 二、防止重复(方法一)
+        // index: {
+        //     import: './src/index.js',
+        //     dependOn: 'shared'
+        // },
+        // another: {
+        //     import: './src/another-module.js',
+        //     dependOn: 'shared'
+        // },
+        // // 当index和another模块中都有lodash时，
+        // // 就会将lodash抽离出来并取名叫shared这样的一个chunk
+        // shared: 'lodash'
+        // (方法二)在optimization中配置也可实现自动抽离重复文件
+    },
     output: {
-        filename: 'bundle.js',
+        // filename: 'bundle.js',
+        filename: '[name].bundle.js',
         path: path.resolve(__dirname, './dist'),
         clean: true,
         // 自定义生成的资源文件的路径
@@ -35,13 +55,12 @@ module.exports = {
 
     // 优化配置
     optimization: {
-        minimizer: [
-            // 实例化css压缩插件
-            new CssMinimizerPlugin()
-        ]
+        // 防止重复，自动抽离
+        splitChunks: {
+            chunks: 'all'
+        }
     },
-    // 压缩需要将mode从development改为production
-    mode: 'production',
+    mode: 'development',
     // 控制台中，显示源代码
     devtool: 'inline-source-map',
     devServer: {
@@ -126,6 +145,19 @@ module.exports = {
                 type: 'json',
                 parser: {
                     parse: json5.parse
+                }
+            },
+
+            // 对js进行babel编译
+            {
+                test: /\.js$/,
+                // 默认会编译本地js以及node_modules中的js，因此使用exclude将其忽略
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
                 }
             },
         ]

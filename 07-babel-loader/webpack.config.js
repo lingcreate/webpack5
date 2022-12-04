@@ -8,6 +8,7 @@ const yaml = require('yaml')
 const json5 = require('json5')
 
 module.exports = {
+    //#region 本章无关
     entry: './src/index.js',
     output: {
         filename: 'bundle.js',
@@ -35,15 +36,11 @@ module.exports = {
 
     // 优化配置
     optimization: {
-        minimizer: [
-            // 实例化css压缩插件
-            new CssMinimizerPlugin()
-        ]
+
     },
-    // 压缩需要将mode从development改为production
     mode: 'production',
     // 控制台中，显示源代码
-    devtool: 'inline-source-map',
+    // devtool: 'inline-source-map',
     devServer: {
         static: './dist'
     },
@@ -126,6 +123,20 @@ module.exports = {
                 type: 'json',
                 parser: {
                     parse: json5.parse
+                }
+            },
+
+            //#endregion
+            // 对js进行babel编译
+            {
+                test: /\.js$/,
+                // 默认会编译本地js以及node_modules中的js，因此使用exclude将其忽略
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
                 }
             },
         ]
