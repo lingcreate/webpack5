@@ -1,40 +1,25 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+
 // 引入 json模块
 const toml = require('toml');
 const yaml = require('yaml')
 const json5 = require('json5')
 
 module.exports = {
-    // entry: './src/index.js',
-    // 配置多入口文件
     entry: {
-        // 一、入口起点
         index: './src/index.js',
-        // another: './src/another-module.js'
-
-        // 二、防止重复(方法一 配置dependOn)
-        // index: {
-        //     import: './src/index.js',
-        //     dependOn: 'shared'
-        // },
-        // another: {
-        //     import: './src/another-module.js',
-        //     dependOn: 'shared'
-        // },
-        // // 当index和another模块中都有lodash时，
-        // // 就会将lodash抽离出来并取名叫shared这样的一个chunk
-        // shared: 'lodash'
-        // (方法二)在 optimization 中配置也可实现自动抽离重复文件
+        another: './src/another-module.js',
     },
     output: {
-        // filename: 'bundle.js',
-        filename: '[name].bundle.js',
+        // 1.9.1 修改输出文件的文件名,并将其放置同一个文件夹下
+        filename: 'scripts/[name].[contenthash].js',
         path: path.resolve(__dirname, './dist'),
         clean: true,
         // 自定义生成的资源文件的路径
-        // assetModuleFilename: 'images/[contenthash][ext]'
+        assetModuleFilename: 'images/[contenthash][ext]'
     },
 
     plugins: [
@@ -55,12 +40,28 @@ module.exports = {
 
     // 优化配置
     optimization: {
-        // 防止重复，自动抽离
+        // css压缩插件
+        minimizer: [
+            new CssMinimizerPlugin()
+        ],
         splitChunks: {
-            chunks: 'all'
+            // 防止重复，自动抽离
+            // chunks: 'all',
+
+            // 1.9.2 缓存指定文件 将node_modules下面的第三方库进行缓存
+            cacheGroups: {
+                vendor: {
+                    // 将文件名带有node_modules的文件整合起来
+                    test: /[\\/]node_modules[\\/]/,
+                    // 并保存在名为vendors的文件下面
+                    name: 'vendors',
+                    chunks: 'all',
+                }
+            }
         }
     },
-    mode: 'development',
+    // development
+    mode: 'production',
     // 控制台中，显示源代码
     devtool: 'inline-source-map',
     devServer: {
@@ -73,9 +74,9 @@ module.exports = {
                 test: /\.(png)$/,
                 type: 'asset/resource',
                 // generator的优先级高于output中的assetModuleFilename
-                generator: {
-                    filename: 'images/test.png'
-                }
+                // generator: {
+                //     filename: 'images/test.png'
+                // }
             },
 
             {
