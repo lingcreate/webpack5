@@ -19,6 +19,7 @@
     "terser-webpack-plugin": "^5.3.6",
     "toml": "^3.0.0",
     "webpack-dev-server": "^4.11.1",
+    "webpack-merge": "^5.8.0",
     "xml-loader": "^1.2.1",
     "yaml": "^2.1.3"
   }
